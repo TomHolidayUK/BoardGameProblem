@@ -5,6 +5,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+  font-size: 13pt;
 }
 
 .board-container {

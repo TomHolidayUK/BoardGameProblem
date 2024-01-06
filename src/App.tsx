@@ -418,17 +418,21 @@ function App() {
           <h3>Interactive Board Game Puzzle</h3>
         </header>
         {/* <div>I received this question in a coding test for a company, I was left confused at the time but after reading into the problem after the test, the solution became apparent: Backtracking Algorithm</div> */}
-        <div>Create a board game setup in line with the <b><u><a className="clickable-element underline" onClick={handleRulesPopupClick} target="_blank" rel="noopener noreferrer">rules<HyperlinkLogo/></a></u></b> and let the programme will determine if there is a possible solution</div>
+        <div>Setup the board in line with the <b className="clickable-element underline" onClick={handleRulesPopupClick}><u>rules<HyperlinkLogo/></u></b> and let the programme determine if there is a possible solution</div>
           {isRulesPopupOpen && (
           <div className="overlay">
             <div className="popup">
                 <h1>Rules</h1>
                 <ul className="styled-list">
-                  <li>The Shawshank Redemption</li>
-                  <li>Seven</li>
-                  <li>Dunkirk</li>
-                  <li>You need at least 1 Assassin: A</li>
-                  <li>The green square is the goal</li>
+                  <div>An Assassin (marked by <b>A</b>) is trying to get to the castle. The castle is the bottom right corner of the board, marked green.</div>
+                  <div>However guards and spotters are there to stop him. A guard (marked by <b>X</b>) blocks a square so an Assassin cannot pass through it. A spotter has good vision and so the Assassin cannot pass through the line of vision of a spotter. A spotter can look in one of 4 directions:</div>
+                  <div>Up (marked by <b>^</b>)</div>
+                  <div>Right (marked by <b>&gt;</b>)</div>
+                  <div>Down (marked by <b>v</b>)</div>
+                  <div>Right (marked by <b>&lt;</b>)</div>
+                  <div>If a guard is standing in the line of vision of a spotter, the Assassin can pass round the back of the guard because the spotter's vision is blocked.</div>
+                  <div>There can only be 1 Assassin.</div>
+                  <div><b>Setup the board in different ways and let the programme calculate if it is possible to get to the castle.</b></div>
                 </ul>
                 <button onClick={handleRulesPopupClick}>Close</button>
             </div>
@@ -443,11 +447,11 @@ function App() {
         <Dial dialValue={heightValue} onDialChange={handleHeightDialChange}/>
       </div>
       <div className="board-container pad">
-      <div className="pad">Click on the squares on the board to change their value</div>
+      <div className="pad">Click on the squares on the board to change them:</div>
         {!route 
         ? 
         <div>
-          <div><b>There is no possible route</b></div> 
+          <h3><b>There is no possible route</b></h3> 
           <Board rows={heightValue} columns={widthValue} onStateChange={handleStateChange} route={route}/>
         </div> 
         : 
