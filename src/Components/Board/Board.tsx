@@ -17,12 +17,24 @@ interface BoardProps {
 
 const Board: React.FC<BoardProps> = ({ rows, columns, onStateChange, route}) => {
 
+
   const initialSquares = Array(rows * columns).fill('');
   const [squareValues, setSquareValues] = useState(initialSquares)
 
+  const containerStyle = {
+    height: `${rows * 50}px`,
+  };
+
+  // useEffect hook to handle prop changes and update state
+  useEffect(() => {
+    const newSquares = Array(rows * columns).fill('');
+    setSquareValues(newSquares);
+  }, [rows, columns]);
+
   const handleClick = (row: number, col: number) => {
     const index = row * columns + col;
-
+    // console.log(index)
+    // console.log(squareValues)
   
     const newSquareValues = [...squareValues];
     // A, X, >, ^, <, v
@@ -51,9 +63,6 @@ const Board: React.FC<BoardProps> = ({ rows, columns, onStateChange, route}) => 
     onStateChange(squareValues);
   }, [squareValues, onStateChange]);
 
-  // const handleChange = () => {
-  //   onStateChange(squareValues);
-  // };
 
   // const renderSquare = (row: number, col: number) => (
   //   (row === rows - 1 && col === columns - 1) ?
@@ -86,10 +95,20 @@ const Board: React.FC<BoardProps> = ({ rows, columns, onStateChange, route}) => 
         />
       );
     } else  {
-      console.log('no route')
+      // console.log('no route')
+      return (
+        <Square
+          key={`${row}-${col}`}
+          value={squareValues[row * columns + col]}
+          // colour={isPathSquare || (row === rows - 1 && col === columns - 1) ? "rgb(102, 253, 0)" : ""}
+          colour={(row === rows - 1 && col === columns - 1) ? "rgb(102, 253, 0)" : ""}
+          onClick={() => handleClick(row, col)}
+        />
+      );
     }
     
   };
+
 
   
 
@@ -100,8 +119,8 @@ const Board: React.FC<BoardProps> = ({ rows, columns, onStateChange, route}) => 
   );
 
   return (
-    <div className="board-container2">
-      <div className="status">Status</div>
+    <div style={containerStyle}>
+      {/* <div className="status">Board Configuration</div> */}
       <div >
         {Array.from({ length: rows }, (_, rowIndex) => renderRow(rowIndex))}
       </div>

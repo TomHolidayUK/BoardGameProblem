@@ -1,4 +1,16 @@
 .square {
     height: 50px;
     width: 50px;
+    border: 0.5px solid #57555c; /* Dark border color */
+    font-size: 1.1em; /* Adjust font size */
+    font-weight: bold; /* Make the text bold */
+    background-color: #eee; /* Light background color */
+    cursor: pointer; /* Change cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+    border-radius: 5px;
+  
+    /* Add hover effect */
+    &:hover {
+      background-color: #ccc; /* Darker background color on hover */
+    }
 }

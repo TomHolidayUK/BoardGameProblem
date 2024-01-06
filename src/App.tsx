@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import './App.css';
 import Board from './Components/Board/Board';
 import Dial from './Components/Dial/Dial';
+// import ParticleConfig from './Components/Particle/ParticleConfig';
+import ParticlesBg from 'particles-bg'
+import HyperlinkLogo from './Components/HyperlinkLogo/HyperlinkLogo';
 
 
-function boardGameSolve(initial_input: string[]): number[][] | boolean {
+function backtrackingAlgorithm(initial_input: string[]): number[][] | boolean {
   
   function freeSquares(B: string[]): number[][][] {
-    // index = [x,y]
+    // index = [y,x]
     let startPosition: number[] = [];
     let width: number = B[0].length;
     let height: number = B.length;
@@ -38,7 +41,8 @@ function boardGameSolve(initial_input: string[]): number[][] | boolean {
           el2 === "v" ||
           el2 === "^" ||
           el2 === ">" ||
-          el2 === "<v>"
+          el2 === "<" 
+          // el2 === "<v>"
         ) {
           squaresWithGuards.push([index2, index]);
         }
@@ -134,7 +138,7 @@ function boardGameSolve(initial_input: string[]): number[][] | boolean {
     positionToCheck: number[]
   ): boolean {
     if (checkMatrix(freeSquares, [positionToCheck[0], positionToCheck[1]])) {
-      console.log(`${[positionToCheck[0], positionToCheck[1]]} is free`);
+      // console.log(`${[positionToCheck[0], positionToCheck[1]]} is free`);
       return true;
     } else {
       return false;
@@ -146,8 +150,8 @@ function boardGameSolve(initial_input: string[]): number[][] | boolean {
     let startPosition: number[] = input[1][0];
     let endPosition: number[] = input[1][1];
     console.log("freeSquares:", freeSquares);
-    console.log("startPosition:", startPosition);
-    console.log("endPosition:", endPosition);
+    // console.log("startPosition:", startPosition);
+    // console.log("endPosition:", endPosition);
 
     // EDGE CASES
     // Is the assasin on a blocked square etc
@@ -211,19 +215,20 @@ function boardGameSolve(initial_input: string[]): number[][] | boolean {
       direction: "",
     };
 
-    // console.log('currentPosition:', currentPosition)
+    // console.log('currentPosition:', currentPositionObject.position)
 
     // if at the endPosition, return path
-    if (
-      currentPositionObject.position[0] === endPosition[0] &&
-      currentPositionObject.position[1] === endPosition[1]
-    ) {
-      console.log("at end position");
-      result = currentPath
-      possibleRoute = true;
-      console.log('result:', currentPath)
-      return result;
-    }
+    // if (
+    //   currentPositionObject.position[0] === endPosition[0] &&
+    //   currentPositionObject.position[1] === endPosition[1]
+    // ) {
+    //   console.log("at end position");
+    //   result = currentPath
+    //   possibleRoute = true;
+    //   console.log('result:', currentPath)
+    //   return result;
+      
+    // }
 
     // remove current position from free squares (to avoid going back over it)
     let index = freeSquares.findIndex(
@@ -256,15 +261,24 @@ function boardGameSolve(initial_input: string[]): number[][] | boolean {
 
       // check if next position is valid, if it is recursively call the findPath
       if (isValid(freeSquares, nextPosition)) {
-        console.log(`${nextPosition} is valid`);
+        // console.log(`${nextPosition} is valid`);
         let nextPositionObject: Path = {
           position: nextPosition,
           direction: directions[i],
         };
         currentPath.push({ ...nextPositionObject });
         findPath([freeSquares, [nextPosition, endPosition]]);
-        console.log("backtrack");
+        // console.log("backtrack");
         currentPath = currentPath.slice(0, -1);
+
+        if (nextPosition[0] === endPosition[0] &&
+             nextPosition[1] === endPosition[1]) {
+          // Path found, exit the function
+          result = currentPath
+          console.log('result:', result)
+          possibleRoute = true
+          return result;
+        }
       }
     }
 
@@ -292,21 +306,24 @@ function boardGameSolve(initial_input: string[]): number[][] | boolean {
     return includesSubarray;
   }
 
+  const free_squares: number[][][] = freeSquares(initial_input)
+  const edge_cases_check: number = checkEdgeCases(free_squares)
+  const assassin_count: number = countAssassins(initial_input)
 
-  if (checkEdgeCases(freeSquares(initial_input)) === 1) {
+  if (edge_cases_check === 1) {
     console.log('The Assasin is on a blocked Square')
     return false
-  } else if (checkEdgeCases(freeSquares(initial_input)) === 2) {
+  } else if (edge_cases_check === 2) {
     console.log('The Final Square is blocked')
     return false
-  } else if (countAssassins(initial_input) === 0) {
+  } else if (assassin_count === 0) {
     console.log("There aren't any Assasins")
     return false
-  } else if (countAssassins(initial_input) > 1) {
+  } else if (assassin_count > 1) {
     console.log("There are too many Asssassins. There can only be 1")
     return false
-  } else if ((checkEdgeCases(freeSquares(initial_input)) === 0) && (countAssassins(initial_input) === 1)) {
-    const result = findPath(freeSquares(initial_input))
+  } else if ((edge_cases_check === 0) && (assassin_count === 1)) {
+    const result = findPath(free_squares)
     if (result.length > 0) {
       const result2: number[][] = result.map(el => el.position);
       return result2
@@ -319,6 +336,9 @@ function boardGameSolve(initial_input: string[]): number[][] | boolean {
   }
 
 }
+
+
+
 
 function App() {
 
@@ -348,7 +368,6 @@ function App() {
 
   const handleStateChange = (childState: SquareInfo[]) => {
     setBoardStateFromChild(childState);
-    // console.log(boardState)
   };
 
   // -------------------------------------------------
@@ -356,8 +375,7 @@ function App() {
   const [route, setRoute] = useState<boolean | number[][]>([]);
 
   const onRunProgramme = () => {
-    console.log('test')
-    console.log(boardState)
+    // console.log(boardState)
     let stringData: string[] = []
     for (let i = 0; i < heightValue; i++) {
       let row: string = ''
@@ -369,14 +387,23 @@ function App() {
         }
       }
     stringData.push(row)
+    }
+    console.log('matrix:', stringData)
+    // console.log(backtrackingAlgorithm(stringData))
+    // const route = backtrackingAlgorithm(stringData)
+
+    setRoute(backtrackingAlgorithm(stringData))
+    console.log('route:', route)
+  };
+
+  const onReset = () => {
+    console.log('test')
+    window.location.reload();
   }
-  console.log('matrix:', stringData)
-  // console.log(boardGameSolve(stringData))
-  // const route = boardGameSolve(stringData)
 
-  setRoute(boardGameSolve(stringData))
-  console.log('route:', route)
-
+  const [isRulesPopupOpen, setIsRulesPopupOpen] = useState(false);
+  const handleRulesPopupClick = () => {
+    setIsRulesPopupOpen(!isRulesPopupOpen);
   };
 
 
@@ -384,26 +411,56 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <b>Interactive Board Game Puzzle</b>
-      </header>
-      <div>I received this question in a coding test for a company, I was left confused at the time but after reading into the problem after the test, the solution became apparent: Backtracking Algorithm</div>
-      <div>Create a board game setup in line with the rules below and let the computer decide two things: 1 - can the assasin get to the goal, 2 - what is the shortest route to the goal </div>
-      <div><b>Setup Board</b></div>
-      <div>Choose Size of Board</div>
-      <div>Width:</div>
-      <Dial dialValue={widthValue} onDialChange={handleWidthDialChange}/>
-      <div>Height:</div>
-      <Dial dialValue={heightValue} onDialChange={handleHeightDialChange}/>
-      <div>Click on the squares on the board to change their value</div>
-      <div>You need at least 1 Assassin: A</div>
-      <div>The green square is the goal</div>
-      <div className="board-container">
-        <Board rows={heightValue} columns={widthValue} onStateChange={handleStateChange} route={route}/>
+      {/* <ParticlesBg color="#ff0000" num={200} type="circle" bg={true} /> */}
+      <ParticlesBg type="circle" num={5} bg={true} />
+      <div className="pad">
+        <header className="App-header">
+          <h3>Interactive Board Game Puzzle</h3>
+        </header>
+        {/* <div>I received this question in a coding test for a company, I was left confused at the time but after reading into the problem after the test, the solution became apparent: Backtracking Algorithm</div> */}
+        <div>Create a board game setup in line with the <b><u><a className="clickable-element underline" onClick={handleRulesPopupClick} target="_blank" rel="noopener noreferrer">rules<HyperlinkLogo/></a></u></b> and let the programme will determine if there is a possible solution</div>
+          {isRulesPopupOpen && (
+          <div className="overlay">
+            <div className="popup">
+                <h1>Rules</h1>
+                <ul className="styled-list">
+                  <li>The Shawshank Redemption</li>
+                  <li>Seven</li>
+                  <li>Dunkirk</li>
+                  <li>You need at least 1 Assassin: A</li>
+                  <li>The green square is the goal</li>
+                </ul>
+                <button onClick={handleRulesPopupClick}>Close</button>
+            </div>
+          </div>
+          )}
       </div>
-      <button onClick={onRunProgramme}>Run</button>
-      {!route && <div>Fail</div>}
-      {/* {route && <div>Pass. Route: {route}</div>} */}
+      <div className="pad">
+        <div><b>Choose Size of Board</b></div>
+        <div>Width:</div>
+        <Dial dialValue={widthValue} onDialChange={handleWidthDialChange}/>
+        <div>Height:</div>
+        <Dial dialValue={heightValue} onDialChange={handleHeightDialChange}/>
+      </div>
+      <div className="board-container pad">
+      <div className="pad">Click on the squares on the board to change their value</div>
+        {!route 
+        ? 
+        <div>
+          <div><b>There is no possible route</b></div> 
+          <Board rows={heightValue} columns={widthValue} onStateChange={handleStateChange} route={route}/>
+        </div> 
+        : 
+        <Board rows={heightValue} columns={widthValue} onStateChange={handleStateChange} route={route}/>}
+        <div>
+          <button onClick={onRunProgramme}>Run</button>
+          <button onClick={onReset}>Reset</button>
+        </div>
+      </div>
+      <div className="pad">
+        <div>Because this solution uses a backtracking algorithm, it doesn't necessarily find the most efficient route, it just tries to find any route.</div>
+        <div>To find the shortest path, Dijkstra's or A * algorithm could be applied.</div>
+      </div>
     </div>
   );
 }
